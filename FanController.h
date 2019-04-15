@@ -1,12 +1,16 @@
 /*
   FanController.h - Library to control up to six fans.
   Created by Giorgio Aresu, November 13, 2016.
+  Edited by LukeV1, April 15, 2019.
   Released into the public domain.
 */
 #ifndef FanController_h
 #define FanController_h
 
+#define LIBCALL_ENABLEINTERRUPT
+
 #include "Arduino.h"
+#include "EnableInterrupt.h"
 
 class FanController
 {
@@ -19,7 +23,6 @@ class FanController
 	private:
 		static FanController *_instances[6];
 		byte _sensorPin;
-		byte _sensorInterruptPin;
 		byte _sensorThreshold;
 		byte _pwmPin;
 		byte _pwmDutyCycle;

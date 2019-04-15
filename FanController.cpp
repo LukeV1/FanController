@@ -1,10 +1,8 @@
-#include "Arduino.h"
 #include "FanController.h"
 
 FanController::FanController(byte sensorPin, unsigned int sensorThreshold, byte pwmPin)
 {
 	_sensorPin = sensorPin;
-	_sensorInterruptPin = digitalPinToInterrupt(sensorPin);
 	_sensorThreshold = sensorThreshold;
 	_pwmPin = pwmPin;
 	pinMode(pwmPin, OUTPUT);
@@ -16,7 +14,7 @@ void FanController::begin()
 	static byte instance;
 	_instance = instance;
 	_instances[instance] = this;
-	digitalWrite(_sensorPin, HIGH);
+	pinMode(_sensorPin, INPUT_PULLUP);
 	setDutyCycle(_pwmDutyCycle);
 	_attachInterrupt();
 	instance++;
@@ -26,7 +24,7 @@ unsigned int FanController::getSpeed() {
 	unsigned int elapsed = millis() - _lastMillis;
 	if (elapsed > _sensorThreshold)
 	{
-		detachInterrupt(_sensorInterruptPin);
+		disableInterrupt(_sensorPin);
 		double correctionFactor = 1000.0 / elapsed;
 		_lastReading = correctionFactor * _halfRevs / 2 * 60;
 		_halfRevs = 0;
@@ -50,22 +48,22 @@ void FanController::_attachInterrupt()
 	switch (_instance)
 	{
 	case 0:
-		attachInterrupt(_sensorInterruptPin, _triggerExt0, FALLING);
+		enableInterrupt(_sensorPin, _triggerExt0, FALLING);
 		break;
 	case 1:
-		attachInterrupt(_sensorInterruptPin, _triggerExt1, FALLING);
+		enableInterrupt(_sensorPin, _triggerExt1, FALLING);
 		break;
 	case 2:
-		attachInterrupt(_sensorInterruptPin, _triggerExt2, FALLING);
+		enableInterrupt(_sensorPin, _triggerExt2, FALLING);
 		break;
 	case 3:
-		attachInterrupt(_sensorInterruptPin, _triggerExt3, FALLING);
+		enableInterrupt(_sensorPin, _triggerExt3, FALLING);
 		break;
 	case 4:
-		attachInterrupt(_sensorInterruptPin, _triggerExt4, FALLING);
+		enableInterrupt(_sensorPin, _triggerExt4, FALLING);
 		break;
 	case 5:
-		attachInterrupt(_sensorInterruptPin, _triggerExt5, FALLING);
+		enableInterrupt(_sensorPin, _triggerExt5, FALLING);
 		break;
 	}
 }
